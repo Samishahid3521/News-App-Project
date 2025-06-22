@@ -1,15 +1,14 @@
-from importlib.resources import read_text
 from flask import Flask, render_template, request
 import pickle
 from news_checker import check_news_on_internet
 
-app = Flask(__name__, )
-           
+app = Flask(__name__)
 
+# Load model and vectorizer
 model = pickle.load(open("model.pkl", "rb"))
 vectorizer = pickle.load(open("vectorizer.pkl", "rb"))
 
-API_KEY = "5023f90d19e34618b1a995200e2d638e"  # ← Replace with your actual NewsAPI key
+API_KEY = "5023f90d19e34618b1a995200e2d638e"  # Your NewsAPI key
 
 @app.route('/')
 def home():
@@ -39,13 +38,6 @@ def predict():
 
     return render_template('index.html', prediction_text=final_result)
 
+# Correct entry point for Render/production
 if __name__ == "__main__":
-    import os
-    debug_mode = os.getenv("FLASK_DEBUG", "False").lower() == "true"
-    app.run(debug=debug_mode)
-if __name__ == '__main__':
     app.run(host='0.0.0.0', port=10000)
-try:
-    api_result = check_news_on_internet(read_text, API_KEY)
-except Exception as e:
-    api_result = {"error": str(e)}
